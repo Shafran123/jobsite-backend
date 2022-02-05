@@ -19,7 +19,22 @@ const companyAdminRegValidation = (data) => {
         }
     )
 
-    return schema.validate(data)
+    return schema.validate(data , options)
+}
+
+const JobValidation = (data) => {
+  const schema = Joi.object(
+      {
+          company_id: Joi.string().required(),
+          job_title: Joi.string().required(),
+          job_description : Joi.string().required(),
+          is_accepting : Joi.bool()
+
+      }
+  )
+
+  return schema.validate(data , options)
 }
 
 module.exports.companyAdminRegValidation = companyAdminRegValidation
+module.exports.JobValidation = JobValidation

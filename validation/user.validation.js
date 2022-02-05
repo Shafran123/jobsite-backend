@@ -94,9 +94,22 @@ const userCV_Body_Validation = (data) => {
 
 }
 
+const jobApplicaitonValidation = (data) => {
+    
+    const schema = Joi.object({
+        user_id: Joi.required(),
+        job_id: Joi.required()
+    })
+
+    return schema.validate(data)
+}
+
+
+
 module.exports.userRegistrationValidation = userRegistrationValidation
 module.exports.userWorkExplValidation = userWorkExplValidation
 module.exports.userSkillValidation = userSkillValidation
 module.exports.userEducationValidation = userEducationValidation
 module.exports.userCV_Validation = userCV_Validation
 module.exports.userCV_Body_Validation = userCV_Body_Validation
+module.exports.jobApplicaitonValidation = jobApplicaitonValidation

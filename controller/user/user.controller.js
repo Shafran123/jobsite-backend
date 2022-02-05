@@ -1,13 +1,22 @@
-const { userRegistrationValidation, userSkillValidation, userWorkExplValidation, userEducationValidation, userCV_Validation, userCV_Body_Validation } = require("../../validation/user.validation")
+const { userRegistrationValidation, userSkillValidation, userWorkExplValidation, userEducationValidation, userCV_Validation, userCV_Body_Validation, jobApplicaitonValidation } = require("../../validation/user.validation")
+
 const Users = require('../../models/user.model')
 const User_Exp = require('../../models/user_experience.model')
 const User_Skill = require('../../models/user_skill.model')
 const User_Education = require('../../models/user_education.model')
 const User_Cv = require('../../models/user_cv.model')
+const Job = require('../../models/job.model')
+const Compnay = require('../../models/admin.model')
+const CompnayDetials = require('../../models/company_details.model')
+const JobApplication = require('../../models/job_applications.model')
+
 const bycrpt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const multer = require("multer");
+const req = require("express/lib/request")
 const upload = multer()
+const { ObjectId } = require("mongodb")
+
 
 
 exports.registerAsUser = async (req, res) => {
@@ -23,9 +32,7 @@ exports.registerAsUser = async (req, res) => {
                     "status": "Bad reaquest",
                     "message": error.details[0].message
                 }
-            }),
-            res.end()
-
+            })
         )
     }
 
@@ -267,3 +274,101 @@ exports.uploadUserCv = async (req, res) => {
 
 }
 
+
+exports.getAllJobs = async (req, res) => {
+
+    // const jobList = await Job.find({ is_accepting: true })
+
+   // console.log(Compnay.collection.name);
+
+    try {
+        const jobList = await Job.aggregate([
+            {
+                $lookup: {
+                    from: CompnayDetials.collection.name,
+                    localField: 'company_id',
+                    foreignField: 'company_id',
+                    as: 'company_detials',
+                },
+                
+            },
+            {
+                $unwind:
+                  {
+                    path: '$company_details',
+                    includeArrayIndex: '0',
+                    preserveNullAndEmptyArrays : true
+                  }
+              }
+        ]).exec()
+        console.log(jobList, 'jobList');
+
+        res.status(200).send({ success: 'true', data:jobList, message: 'Job List Fetch Sucessfully' })
+
+    }catch  (err) {
+
+        res.status(500).send({ status: 500, message: err })
+    }
+ 
+
+}
+
+
+exports.applyJobByJobId = async (req, res) => {
+
+     //Validation
+     const { error } = jobApplicaitonValidation(req.body)
+
+     if (error) {
+        return (
+            res.status(400).send({
+                code: 400,
+                error: {
+                    "status": "Bad reaquest",
+                    "message": error.details[0].message
+                }
+            })
+        )
+    }
+
+      //check job applicaiton exist
+      const applicaitonCheck = await JobApplication.findOne({ job_id: req.body.job_id , user_id : req.body.user_id })
+
+      if (applicaitonCheck) {
+          return (
+              res.status(400).send({
+                  code: 400,
+                  error: {
+                      "status": "Bad reaquest",
+                      "message": 'Application Already Exixts'
+                  }
+              })
+          )
+      }
+  
+
+    const job_application = new JobApplication({
+        user_id: ObjectId(req.body.user_id),
+        job_id : ObjectId(req.body.job_id)
+    });
+
+    console.log('job_application', job_application)
+
+    try {
+        const job = await Job.findOne({ _id : req.body.job_id})
+        console.log('job', job)
+
+        job.applicant_count = job.applicant_count + 1
+
+        const appliedJob = await job_application.save();
+
+        const updateApplyCount = await job.save();
+
+        res.status(200).send({ success: 'true', appliedJob, message: 'Job Applied Sucessfull' })
+    } catch (err) {
+        res.status(500).send({ status: 500, message: err })
+    }
+
+
+
+}
