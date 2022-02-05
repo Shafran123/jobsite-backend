@@ -1,0 +1,58 @@
+# GET https://bank-of-seamless.herokuapp.com/api/v1/balance
+
+# GET http://localhost:2400/api/v1/hello
+
+# POST http://localhost:2400/api/v1/register-user
+# Content-Type: application/json
+
+# {
+# "name": "shafran",
+# "email": "shafran@ieee.org",
+# "contact_no" : "0771713701",
+# "password" : "123456789999"
+# }
+
+# POST http://localhost:2400/api/v1/add-user-work-exp
+# Content-Type: application/json
+
+# {
+# "user_id": "61fd2d48e28e4c3a9d133977",
+# "job_title": "TEST_!23",
+# "company": "Deliveegate",
+# "industry": "hello",
+# "date_started" : "2022/02/04",
+# "is_present": true
+# }
+
+
+# POST http://localhost:2400/api/v1/add-user-skill
+# Content-Type: application/json
+
+# {
+# "user_id": "61fd2d48e28e4c3a9d133977",
+# "skill_name": "Node Js"
+# }
+
+# POST http://localhost:2400/api/v1/add-user-education
+# Content-Type: application/json
+
+# {
+# "user_id": "61fd2d48e28e4c3a9d133977",
+# "edu_level": "Masters",
+# "edu_feild" : "Software Engineering",
+# "school":"Plymouth University",
+# "date_started" : "2022/02/04",
+# "is_present" : true
+# }
+
+POST http://localhost:2400/api/v1/admin/register-company-admin
+Content-Type: application/json
+
+{
+"company_name": "Delivergate Pvt Ltd",
+"email": "shafran@delivergate.com",
+"password": "123456789999",
+"country": "United Kindom",
+"industry": "Engineering"
+}
+
