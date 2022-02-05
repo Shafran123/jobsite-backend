@@ -8,22 +8,21 @@ const companyAdminRoute = require('./routes/admin/company_admin.router');
 const { environment } = require('./environments/environment');
 const AWS = require('aws-sdk');
 
+dotenv.config();
 // Enter copied or downloaded access ID and secret key here
-ID = 'AKIAWILLR4T5AUTWMHLI';
-SECRET = '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';
+ID = 'AKIAWILLR4T5E3YIVCHC';
 
 // The name of the bucket that you have created
 BUCKET_NAME = 'jobmart/user_cv';
 
 s3 = new AWS.S3({
     accessKeyId: ID,
-    secretAccessKey: SECRET
+    secretAccessKey: process.env.SECRET
 });
 
 //balance = process.env.BALANCE
 const port = process.env.PORT || 2400
 
-dotenv.config();
 
 //DB Connection
 mongoose.connect(process.env.mongo_db,
