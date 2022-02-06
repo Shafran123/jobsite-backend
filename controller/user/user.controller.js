@@ -1,4 +1,4 @@
-const { userRegistrationValidation, userSkillValidation, userWorkExplValidation, userEducationValidation, userCV_Validation, userCV_Body_Validation, jobApplicaitonValidation } = require("../../validation/user.validation")
+const { userRegistrationValidation, userSkillValidation, userWorkExplValidation, userEducationValidation, userCV_Validation, userCV_Body_Validation, jobApplicaitonValidation, userLoginValidation } = require("../../validation/user.validation")
 
 const Users = require('../../models/user.model')
 const User_Exp = require('../../models/user_experience.model')
@@ -73,6 +73,62 @@ exports.registerAsUser = async (req, res) => {
     }
 
 }
+
+
+exports.loginAsUser = async (req, res) => {
+
+    //Validation 
+    const { error } = userLoginValidation(req.body)
+
+    if (error) {
+        return (
+            res.status(400).send({
+                code: 400,
+                error: {
+                    "status": "Bad reaquest",
+                    "message": error.details[0].message
+                }
+            })
+        )
+    }
+
+
+    //User Check
+    const isUserAvailable = await Users.findOne({ email: req.body.email })
+
+
+    if (!isUserAvailable) {
+        return (
+            res.status(400).send({
+                code: 400,
+                error: {
+                    "status": "Bad reaquest",
+                    "message": " Seems like you dont have account "
+                }
+            })
+        )
+    }
+
+    //PasswordComaprison
+    const validPassword = await bycrpt.compare(req.body.password, isUserAvailable.password)
+    if (!validPassword) {
+        return (
+            res.status(400).send({
+                code: 400,
+                error: {
+                    "status": "Bad reaquest",
+                    "message": "Incorrect Password"
+                }
+            })
+        ) 
+    }
+
+      //creating a token
+      const token = jwt.sign({ _id: isUserAvailable._id }, process.env.TOKEN_SECRET)
+      res.header('auth-Token', token).send({ status: 200, success: 'true', token: token, userId: isUserAvailable._id, message: 'User Login Sucessfull' })
+
+}
+
 
 
 exports.addUserWorkExperince = async (req, res) => {
@@ -279,7 +335,7 @@ exports.getAllJobs = async (req, res) => {
 
     // const jobList = await Job.find({ is_accepting: true })
 
-   // console.log(Compnay.collection.name);
+    // console.log(Compnay.collection.name);
 
     try {
         const jobList = await Job.aggregate([
@@ -290,36 +346,36 @@ exports.getAllJobs = async (req, res) => {
                     foreignField: 'company_id',
                     as: 'company_detials',
                 },
-                
+
             },
             {
                 $unwind:
-                  {
+                {
                     path: '$company_details',
                     includeArrayIndex: '0',
-                    preserveNullAndEmptyArrays : true
-                  }
-              }
+                    preserveNullAndEmptyArrays: true
+                }
+            }
         ]).exec()
         console.log(jobList, 'jobList');
 
-        res.status(200).send({ success: 'true', data:jobList, message: 'Job List Fetch Sucessfully' })
+        res.status(200).send({ success: 'true', data: jobList, message: 'Job List Fetch Sucessfully' })
 
-    }catch  (err) {
+    } catch (err) {
 
         res.status(500).send({ status: 500, message: err })
     }
- 
+
 
 }
 
 
 exports.applyJobByJobId = async (req, res) => {
 
-     //Validation
-     const { error } = jobApplicaitonValidation(req.body)
+    //Validation
+    const { error } = jobApplicaitonValidation(req.body)
 
-     if (error) {
+    if (error) {
         return (
             res.status(400).send({
                 code: 400,
@@ -331,31 +387,31 @@ exports.applyJobByJobId = async (req, res) => {
         )
     }
 
-      //check job applicaiton exist
-      const applicaitonCheck = await JobApplication.findOne({ job_id: req.body.job_id , user_id : req.body.user_id })
+    //check job applicaiton exist
+    const applicaitonCheck = await JobApplication.findOne({ job_id: req.body.job_id, user_id: req.body.user_id })
 
-      if (applicaitonCheck) {
-          return (
-              res.status(400).send({
-                  code: 400,
-                  error: {
-                      "status": "Bad reaquest",
-                      "message": 'Application Already Exixts'
-                  }
-              })
-          )
-      }
-  
+    if (applicaitonCheck) {
+        return (
+            res.status(400).send({
+                code: 400,
+                error: {
+                    "status": "Bad reaquest",
+                    "message": 'Application Already Exixts'
+                }
+            })
+        )
+    }
+
 
     const job_application = new JobApplication({
         user_id: ObjectId(req.body.user_id),
-        job_id : ObjectId(req.body.job_id)
+        job_id: ObjectId(req.body.job_id)
     });
 
     console.log('job_application', job_application)
 
     try {
-        const job = await Job.findOne({ _id : req.body.job_id})
+        const job = await Job.findOne({ _id: req.body.job_id })
         console.log('job', job)
 
         job.applicant_count = job.applicant_count + 1

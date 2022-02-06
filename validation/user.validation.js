@@ -24,6 +24,30 @@ const userRegistrationValidation = (data) => {
 
 }
 
+const userLoginValidation = (data) => {
+    const schema = Joi.object(
+        {
+            email: Joi.string().required().email(),
+            password: Joi.string().required()
+
+        }
+    )
+
+    return schema.validate(data)
+
+}
+
+const userDetailsValidation = (data) => {
+    const schema = Joi.object(
+        {
+            user_id: Joi.required(),
+        }
+    )
+
+    return schema.validate(data)
+
+}
+
 
 const userWorkExplValidation = (data) => {
     const schema = Joi.object({
@@ -107,9 +131,11 @@ const jobApplicaitonValidation = (data) => {
 
 
 module.exports.userRegistrationValidation = userRegistrationValidation
+module.exports.userLoginValidation = userLoginValidation
 module.exports.userWorkExplValidation = userWorkExplValidation
 module.exports.userSkillValidation = userSkillValidation
 module.exports.userEducationValidation = userEducationValidation
 module.exports.userCV_Validation = userCV_Validation
 module.exports.userCV_Body_Validation = userCV_Body_Validation
 module.exports.jobApplicaitonValidation = jobApplicaitonValidation
+module.exports.userDetailsValidation = userDetailsValidation
