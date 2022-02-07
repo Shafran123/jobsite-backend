@@ -7,6 +7,7 @@ const userRoute = require('./routes/user/user.router');
 const companyAdminRoute = require('./routes/admin/company_admin.router');
 const { environment } = require('./environments/environment');
 const AWS = require('aws-sdk');
+const swaggerUi = require('swagger-ui-express')
 
 dotenv.config();
 // Enter copied or downloaded access ID and secret key here
@@ -43,6 +44,7 @@ app.use((req, res, next) => {
 
 app.use('/api/v1/user', userRoute)
 app.use('/api/v1/admin', companyAdminRoute)
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
 
 app.listen(port, function () {
     console.log(`JobSite listening on port ${port}!`);

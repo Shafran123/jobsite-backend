@@ -86,7 +86,7 @@
 # "is_accepting": true
 # }
 
-# GET http://localhost:2400/api/v1/user/get-all-jobs
+GET http://localhost:2400/api/v1/user/get-all-jobs
 
 
 # GET http://localhost:2400/api/v1/admin/get-jobs-by-company-id?company_id=61fe376b8f4b831d9ff9b25c
@@ -100,4 +100,4 @@
 # }
 
 # GET http://localhost:2400/api/v1/user/get-user-basic-details?user_id=61fd2d48e28e4c3a9d133977
-GET http://localhost:2400/api/v1/user/get-user-applied-jobs?user_id=61fd2d48e28e4c3a9d133977
+# GET http://localhost:2400/api/v1/user/get-user-applied-jobs?user_id=61fd2d48e28e4c3a9d133977

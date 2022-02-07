@@ -120,12 +120,23 @@ exports.loginAsUser = async (req, res) => {
                     "message": "Incorrect Password"
                 }
             })
-        ) 
+        )
     }
 
-      //creating a token
-      const token = jwt.sign({ _id: isUserAvailable._id }, process.env.TOKEN_SECRET)
-      res.header('auth-Token', token).send({ status: 200, success: 'true', token: token, userId: isUserAvailable._id, message: 'User Login Sucessfull' })
+    //creating a token
+    const token = jwt.sign({ _id: isUserAvailable._id }, process.env.TOKEN_SECRET)
+    res.header('auth-Token', token).send({ 
+        status: 200, 
+        success: 'true', 
+        token: token, 
+        user: {
+            userId: isUserAvailable._id, 
+            user_name: isUserAvailable.name,
+            user_email : isUserAvailable.email,
+            user_role : 1,
+        }, 
+        message: 'User Login Sucessfull' 
+    })
 
 }
 
